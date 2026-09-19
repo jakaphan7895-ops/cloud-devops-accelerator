@@ -1,0 +1,8 @@
+# Local environment & secret keys
+*.pem
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# Crash logs
+*.log
