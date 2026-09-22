@@ -24,7 +24,7 @@ pip install psutil requests
 ##🧰 How to Run
 1.(Optional) Set Custom Webhook URL:
 Pass your Webhook URL as an environment variable (defaults to test endpoint if unset):
-export ALERT_WEBHOOK_URL="[https://discord.com/api/webhooks/YOUR_WEBHOOK_URL](https://discord.com/api/webhooks/YOUR_WEBHOOK_URL)"
+export ALERT_WEBHOOK_URL="https://webhook.site/4a3bcaf7-1afd-42ab-92a4-3d15ff58e750"
 
 2.Execute Monitoring Script:
 python monitor_and_alert.py
