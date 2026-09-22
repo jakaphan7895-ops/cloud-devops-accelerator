@@ -15,7 +15,6 @@ This module demonstrates core relational database operations, automated data log
    ```bash
    python db_automation.py
 
-   Execute backup script:
 2.Execute backup script:
 Bash
 ./backup_db.sh

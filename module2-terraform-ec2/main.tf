@@ -78,6 +78,12 @@ resource "aws_key_pair" "generated_key" {
   public_key = tls_private_key.my_key.public_key_openssh
 }
 
+resource "local_file" "pem_file" {
+  filename        = "${path.module}/testkey.pem"
+  content         = tls_private_key.my_key.private_key_pem
+  file_permission = "0400"
+}
+
 
 # 4. สร้าง EC2 Instance
 data "aws_ami" "ubuntu" {

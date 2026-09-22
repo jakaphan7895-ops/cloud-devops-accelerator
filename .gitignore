@@ -6,3 +6,8 @@
 
 # Crash logs
 *.log
+
+```gitignore
+# Exclude database files and backups
+*.db
+backups/
