@@ -5,6 +5,7 @@ This repository contains hands-on labs and configurations for migrating a Python
 🏗️ Architecture Overview
 The application architecture consists of a persistent Python Web Service (Flask API) that interacts with a PostgreSQL database running inside a single-node Kubernetes cluster created with kind.
 
+```text
 [ Host Browser / cURL ]
            │
            │ (Port Forwarding / NodePort: 30001)
@@ -51,6 +52,7 @@ The application architecture consists of a persistent Python Web Service (Flask 
 │   ├── python-app-deployment.yaml # Python Web Application deployment definition
 │   └── python-app-service.yaml # External NodePort service for Python app
 └── README.md                   # Project documentation
+text```
 
 🛠️ Prerequisites
 Docker Desktop (with Kubernetes / kind enabled)
