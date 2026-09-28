@@ -11,3 +11,9 @@
 # Exclude database files and backups
 *.db
 backups/
+
+.venv/
+__pycache__/
+*.tar
+*.log
+.env
