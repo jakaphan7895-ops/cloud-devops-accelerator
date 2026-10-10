@@ -1,0 +1,10 @@
+[
+  {
+    "op": "add",
+    "path": "/spec/template/spec/nodeSelector",
+    "value": {
+      "kubernetes.io/os": "linux",
+      "ingress-ready": "true"
+    }
+  }
+]

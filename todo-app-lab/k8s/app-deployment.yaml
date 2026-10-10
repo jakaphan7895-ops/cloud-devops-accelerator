@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-app
+  template:
+    metadata:
+      labels:
+        app: todo-app
+    spec:
+      containers:
+        - name: todo-app
+          image: todo-app:v3.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          resources:             # <-- เพิ่มส่วนนี้
+            requests:
+              cpu: "100m"        # ขอ CPU 0.1 Core
+              memory: "128Mi"
+            limits:
+              cpu: "200m"        # จำกัดสูงสุดไม่เกิน 0.2 Core
+              memory: "256Mi"
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+          env:
+            - name: DB_HOST
+              value: "postgres-service"

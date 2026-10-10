@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-user-deployment
+  labels:
+    app: node-user-service
+spec:
+  replicas: 2 # เพิ่มเป็น 2 replicas เพื่อรองรับ Zero-downtime
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1        # สร้าง Pod ใหม่เพิ่มเกินมาได้สูงสุด 1 Pod ระหว่างอัปเดต
+      maxUnavailable: 0  # ต้องห้ามมี Pod ดับพร้อมกันเด็ดขาด (รักษาอย่างน้อย 2 Pods เสมอ)
+  selector:
+    matchLabels:
+      app: node-user-service
+  template:
+    metadata:
+      labels:
+        app: node-user-service
+    spec:
+      containers:
+      - name: user-service
+        image: node-user-service:v1.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "250m"
+            memory: "256Mi"
+        
+        # Readiness Probe Check
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 3000
+          initialDelaySeconds: 2 # รอกี่วินาทีหลังเริ่ม Pod ก่อนเริ่มเช็ก
+          periodSeconds: 3       # เช็กทุกๆ กี่วินาที
+          failureThreshold: 2    # เช็กพลาดกี่ครั้งถึงถอดออกจาก Endpoints
+
+        # Liveness Probe Check
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 3    # เช็กพลาดกี่ครั้งถึงจะสั่ง Restart Container
