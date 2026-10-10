@@ -69,12 +69,14 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 5
           failureThreshold: 3
+```
 
 🧪 Testing & Verification
 
 Load Testing Script (PowerShell)
 Executes continuous HTTP GET requests every 500ms to monitor traffic availability:
 
+```PowerShell
 while ($true) {
     try {
         $response = Invoke-RestMethod -Uri "[http://todo.local/api/user](http://todo.local/api/user)" -TimeoutSec 2
@@ -84,6 +86,7 @@ while ($true) {
     }
     Start-Sleep -MilliSeconds 500
 }
+```
 
 Triggering Rollout
 
