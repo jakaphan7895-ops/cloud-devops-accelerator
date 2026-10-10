@@ -247,14 +247,16 @@ To override default configurations (such as storage retention, resource limits, 
 ```powershell
 # Example of upgrading/modifying the release with a custom values file
 helm upgrade monitoring-stack prometheus-community/kube-prometheus-stack --namespace monitoring -f values.yaml
-```powershell
+```
+
 2. Inspecting Custom Resources (CRDs)
 The kube-prometheus-stack installs several Custom Resource Definitions (CRDs) to manage monitoring objects declaratively, such as ServiceMonitors and PodMonitors:
 
 ```powershell
 # List available monitoring custom resources
 kubectl get servicemonitors -n monitoring
-```powershell
+```
+
 3. Cleaning Up and Uninstallation
 If the monitoring stack needs to be completely removed from the cluster, the Helm release can be uninstalled cleanly:
 
@@ -264,4 +266,4 @@ helm uninstall monitoring-stack -n monitoring
 
 # (Optional) Delete the monitoring namespace if no longer needed
 kubectl delete namespace monitoring
-```powershell
+```
