@@ -110,3 +110,95 @@ Probes vs Lifecycle: readinessProbe controls traffic routing, while livenessProb
 
 Graceful Shutdown: preStop hooks are crucial in high-traffic environments to guarantee 100% Zero-Downtime deployments.
 
+# 🔒 Lab 2: Kubernetes Secret Management & TLS/HTTPS Enforcer
+
+This repository demonstrates how to secure edge traffic on a local Kubernetes cluster (`kind`) by implementing **TLS termination**, **Secret management**, and **automatic HTTP-to-HTTPS redirection** via the NGINX Ingress Controller.
+
+---
+
+## 🎯 Objectives
+* Generate self-signed TLS certificates for local domain routing (`todo.local`).
+* Store sensitive private keys and public certificates securely as **Kubernetes Secrets** (`kubernetes.io/tls`).
+* Configure Ingress annotations to enforce secure connections and perform **Permanent Redirects (308)** from HTTP to HTTPS.
+
+---
+
+## 🛠️ Implementation Steps
+
+### 1. Generating Self-Signed TLS Certificate
+Created a private key (`tls.key`) and public certificate (`tls.crt`) for the domain `todo.local` using Docker[cite: 9]:
+
+```PowerShell
+
+docker run --rm -v ${PWD}:/work -w /work alpine/openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=todo.local/O=TodoApp"
+
+```
+### 2. Creating Kubernetes Secret
+Packaged the certificate files into a secure Kubernetes Secret object:
+
+```PowerShell
+
+kubectl create secret tls todo-tls-secret --cert=tls.crt --key=tls.key
+
+```
+
+### 3. Ingress Manifest Configuration (k8s/app-ingress.yaml)
+Configured the Ingress resource to reference the TLS secret and enforce strict HTTPS redirection:
+
+```yaml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: todo-app-ingress
+  annotations:
+    # Enforce redirect from HTTP (port 80) to HTTPS (port 443)
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - todo.local
+    secretName: todo-tls-secret
+  rules:
+  - host: todo.local
+    http:
+      paths:
+      - path: /api/user
+        pathType: Prefix
+        backend:
+          service:
+            name: node-user-service
+            port:
+              number: 3000
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: flask-frontend-service
+            port:
+              number: 5000
+```
+🧪 Testing & Verification
+Verifying HTTPS Traffic (TLS Termination):
+
+```PowerShell
+curl.exe -k [https://todo.local/api/user](https://todo.local/api/user)
+
+Result: Successfully returned JSON response (status: success, role: Cloud Specialist) over port 443.
+
+Verifying HTTP-to-HTTPS Redirection:
+
+curl.exe -i [http://todo.local/api/user](http://todo.local/api/user)
+
+Result: Returned HTTP/1.1 308 Permanent Redirect pointing to https://todo.local/api/user.
+```
+💡 Summary of Key Learnings
+
+1.RollingUpdate Strategy: maxUnavailable: 0 ensures active instances handle traffic throughout deployment rollouts.
+
+2.Graceful Shutdown: preStop lifecycle hooks prevent dropped connections while Ingress controllers unregister terminating pod endpoints.
+
+3.Edge Security & TLS Termination: Offloading TLS decryption to Ingress reduces CPU overhead on downstream backend microservices.
+
+4.Declarative Redirects: Utilizing Ingress annotations (ssl-redirect) standardizes security controls without application code changes.
